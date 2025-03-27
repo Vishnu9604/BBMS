@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donor Scheduling</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            background: linear-gradient(135deg, #e68871, #9b59b6);
+            position: relative;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background-color: #fff;
+            padding: 15px 20px;
+            border-radius: 5px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 18px;
+            margin: 15px 0;
+        }
+
+        input, select, button {
+            width: 100%;
+            margin: 8px 0;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        button {
+            background-color: #d9534f;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: #c9302c;
+        }
+    </style>
+    <script>
+        // Predefined list of hospitals based on cities
+        const hospitals = {
+            "Dombivli": ["plasma Blood Bank", "jeevan Jyoti Blood Camp"],
+            "Mumbai": ["mumbai Blood Donation Center", "sion Blood Bank"],
+            "Pune": ["pune Blood Donation Camp", "sahyadri Blood Bank"],
+            "Kolhapur": ["kolhapur Blood Donation Camp", "maha Blood Bank"],
+            "Sindhudurg": ["sindhudurg Blood Donation Camp", "sindhudurg Blood Bank"]
+        };
+
+        function updateCamps() {
+    var city = document.getElementById("city").value;
+    var campSelect = document.getElementById("blood_camp");
+    var hospitalInput = document.getElementById("hospital");
+    campSelect.innerHTML = "";
+    hospitalInput.value = ""; // Clear the hospital input
+
+    if (hospitals[city]) {
+        hospitals[city].forEach(function(camp) {
+            var option = document.createElement("option");
+            option.value = camp;
+            option.textContent = camp;
+            campSelect.appendChild(option);
+        });
+    } else {
+        var option = document.createElement("option");
+        option.value = "";
+        option.textContent = "No camps available";
+        campSelect.appendChild(option);
+    }
+
+    // Update the hospital input when a camp is selected
+    campSelect.onchange = function() {
+        hospitalInput.value = campSelect.value;
+    };
+}
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2>Schedule Your Blood Donation</h2>
+<!--<form action="/schedule-appointment" method="post">-->
+<form action="/schedule-appointment" method="post">
+
+
+            <label for="city">Select Your City:</label>
+            <select id="city" name="city" required onchange="updateCamps()">
+                <option value="">Select a city</option>
+                <option value="Dombivli">Dombivli</option>
+                <option value="Mumbai">Mumbai</option>
+                <option value="Pune">Pune</option>
+                <option value="Kolhapur">Kolhapur</option>
+                <option value="Sindhudurg">Sindhudurg</option>
+            </select>
+
+            <label for="blood_camp">Find Nearby Blood Bank:</label>
+            <select id="blood_camp" name="blood_camp" required>
+                <option value="">Select a city first</option>
+            </select>
+            
+            <label for="blood_group">Select Your Blood Group:</label>
+            <select id="blood_group" name="blood_group" required>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+            </select>
+
+            <label for="date">Select Date:</label>
+            <input type="date" id="date" name="date" required>
+
+            <label for="time">Select Time:</label>
+            <input type="time" id="time" name="time" required>
+            <input type="hidden" name="hospital" id="hospital" required>
+
+            <button type="submit">Schedule Donation</button>
+        </form>
+    </div>
+</body>
+</html>

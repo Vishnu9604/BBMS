@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blood Bank Management System</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js CDN -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #c9302c;
+        }
+
+        /* Hamburger Menu Button */
+        .dashboard-toggle-button {
+            font-size: 35px;
+            cursor: pointer;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            color: #a4100b;
+        }
+
+        /* Sidebar */
+        .dashboard-nav {
+            position: fixed;
+            top: 0;
+            left: -200px; /* Initially hidden */
+            width: 200px;
+            height: 100%;
+            background-color: #c9312cd9;
+            color: #c9302c;
+            padding-top: 20px;
+            transition: left 0.3s ease;
+            z-index: 1000;
+        }
+
+        .dashboard-nav button {
+            background-color: #c9312c;
+            color: white;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            text-align: left;
+            border-bottom: 1px solid #444;
+            cursor: pointer;
+        }
+
+        .dashboard-nav button:hover {
+            background-color: #c9302c;
+        }
+
+        /* Container */
+        .container {
+            margin: 20px;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: none;
+            transition: margin-left 0.3s ease;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table th, table td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        table th {
+            background-color: #c9302c;
+            color: white;
+        }
+
+        table td {
+            background-color: #ffffff;
+        }
+
+        table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        table tr:hover {
+            background-color: #ddd;
+        }
+
+        .section-title {
+            background-color: #c9302c;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .back-button {
+            display: block;
+            width: 150px;
+            margin: 20px auto;
+            padding: 10px;
+            background-color: #c9302c;
+            color: white;
+            text-align: center;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+        .back-button:hover {
+            background-color: #a4100b;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .approve-button, .reject-button {
+            background-color: #c9302c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        .approve-button:hover, .reject-button:hover {
+            background-color: #a4100b;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Blood Availability Section */
+        .blood-availability-section {
+            display: none;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        #blood-availability-chart {
+            width: 100%;
+            height: 400px;
+        }
+
+        /* Update Button */
+        .update-button {
+            position: relative;
+            padding: 10px 20px;
+            background-color: #c9302c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .update-button:hover {
+            background-color: #a4100b;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Blood Bank Management System</h1>
+
+    <!-- Hamburger Menu Button -->
+    <div class="dashboard-toggle-button" id="hamburgerButton" onclick="toggleDashboard()">☰</div>
+
+    <!-- Sidebar Menu -->
+    <div class="dashboard-nav" id="dashboard-nav">
+        <button onclick="showDonors()">Donors List</button>
+        <button onclick="showReceivers()">Receivers List</button>
+        <button onclick="showBloodAvailability()">Blood Availability</button>
+    </div>
+
+    <!-- Donors List Section -->
+    <div id="donors-section" class="container" style="display: block;">
+        <div class="section-title">
+            <h2>Registered Donors For Appointment</h2>
+        </div>
+        <table id="donors-table">
+            <thead>
+                <tr>
+                    <th>Donor Name</th>
+                    <th>Blood Group</th>
+                    <th>Contact Number</th>
+                    <th>Appointment Date</th>
+                    <th>Appointment Time</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each appointments}}
+                <tr>
+                    <td>{{this.donorName}}</td>
+                    <td>{{this.bloodGroup}}</td>
+                    <td>{{this.contactNumber}}</td>
+                    <td>{{this.date}}</td>
+                    <td>{{this.time}}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="approve-button">Approve</button>
+                            <button class="reject-button">Reject</button>
+                        </div>
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Receivers List Section -->
+    <div id="receivers-section" class="container hidden">
+        <div class="section-title">
+            <h2>Registered Receivers For Appointment</h2>
+        </div>
+        <table id="receivers-table">
+            <thead>
+                <tr>
+                    <th>Receiver Name</th>
+                    <th>Blood Group</th>
+                    <th>Contact Number</th>
+                    <th>Appointment Date</th>
+                    <th>Appointment Time</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each receiverRequests}}
+                <tr>
+                    <td>{{this.receiverName}}</td>
+                    <td>{{this.bloodGroup}}</td>
+                    <td>{{this.contactNumber}}</td>
+                    <td>{{this.date}}</td>
+                    <td>{{this.time}}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="approve-button">Approve</button>
+                            <button class="reject-button">Reject</button>
+                        </div>
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Blood Availability Section -->
+    <div id="blood-availability-section" class="blood-availability-section">
+        <div class="section-title">
+            <h2>Blood Availability</h2>
+        </div>
+        <canvas id="blood-availability-chart"></canvas> <!-- Chart.js Canvas -->
+        <button id="add-blood" class="update-button" onclick="addBlood()">Add Blood</button>
+        <button id="remove-blood" class="update-button" onclick="removeBlood()">Remove Blood</button>
+    </div>
+
+    <a href="javascript:history.back()" class="back-button">Go Back</a>
+
+    <script>
+        // Initialize blood data
+        let bloodData = {
+            labels: ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'],
+            values: [0, 0, 0, 0, 0, 0, 0, 0] // Set all values to 0 for new users
+        };
+
+        // Load blood data from localStorage on page load
+        window.onload = function() {
+            const storedData = localStorage.getItem('bloodData');
+            if (storedData) {
+                bloodData = JSON.parse(storedData);
+            }
+            renderBloodAvailabilityChart();
+        };
+
+        let bloodChart; // Variable to hold the chart instance
+
+        // Toggle visibility of dashboard
+        function toggleDashboard() {
+            const dashboardNav = document.getElementById("dashboard-nav");
+            const toggleButton = document.getElementById("hamburgerButton");
+
+            if (dashboardNav.style.left === "0px") {
+                dashboardNav.style.left = "-200px"; // Hide sidebar
+            } else {
+                dashboardNav.style.left = "0"; // Show sidebar
+            }
+        }
+
+        // Function to show Donor Dashboard
+        function showDonors() {
+            document.getElementById("donors-section").style.display = "block";
+            document.getElementById("receivers-section").style.display = "none";
+            document.getElementById("blood-availability-section").style.display = "none"; // Hide blood availability
+            toggleDashboard(); // Hide the menu after selecting
+            fetchDonors();
+        }
+
+        // Function to show Receiver Dashboard
+        function showReceivers() {
+            document.getElementById("receivers-section").style.display = "block";
+            document.getElementById("donors-section").style.display = "none";
+            document.getElementById("blood-availability-section").style.display = "none"; // Hide blood availability
+            toggleDashboard(); // Hide the menu after selecting
+            fetchReceivers();
+        }
+
+        // Function to show Blood Availability Section
+        function showBloodAvailability() {
+            document.getElementById("blood-availability-section").style.display = "block";
+            document.getElementById("donors-section").style.display = "none";
+            document.getElementById("receivers-section").style.display = "none";
+            toggleDashboard(); // Hide the menu after selecting
+            renderBloodAvailabilityChart();
+        }
+
+        // Function to render the blood availability chart
+        function renderBloodAvailabilityChart() {
+            const ctx = document.getElementById('blood-availability-chart').getContext('2d');
+
+            // Destroy the existing chart if it exists
+            if (bloodChart) {
+                bloodChart.destroy();
+            }
+
+            // Create a new chart
+            bloodChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: bloodData.labels,
+                    datasets: [{
+                        label: 'Blood Available (in liters)',
+                        data: bloodData.values,
+                        backgroundColor: '#c9302c',
+                        borderColor: '#a4100b',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100 // Set maximum limit
+                        }
+                    }
+                }
+            });
+        }
+
+        // Function to add blood
+        function addBlood() {
+            const bloodGroup = prompt("Enter Blood Group (e.g., A+, A-, B+, B-, O+, O-, AB+, AB-):");
+            const amount = parseInt(prompt("Enter a Blood Amount (in liters):"), 10);
+            const index = bloodData.labels.indexOf(bloodGroup);
+
+            if (index !== -1 && !isNaN(amount)) {
+                const newAmount = bloodData.values[index] + amount;
+
+                if (newAmount > 100) {
+                    bloodData.values[index] = 100;
+                    alert("Blood Stock is full for " + bloodGroup);
+                } else {
+                    bloodData.values[index] = newAmount;
+                }
+                localStorage.setItem('bloodData', JSON.stringify(bloodData)); // Save to localStorage
+                renderBloodAvailabilityChart();
+            } else {
+                alert("Invalid blood group or amount.");
+            }
+        }
+
+        // Function to remove blood
+        function removeBlood() {
+            const bloodGroup = prompt("Enter Blood Group (e.g., A+, A-, B+, B-, O+, O-, AB+, AB-):");
+            const amount = parseInt(prompt("Enter a Blood Amount (in liters):"), 10);
+            const index = bloodData.labels.indexOf(bloodGroup);
+
+            if (index !== -1 && !isNaN(amount)) {
+                const newAmount = bloodData.values[index] - amount;
+
+                if (newAmount < 0) {
+                    bloodData.values[index] = 0;
+                    alert("Blood Stock is empty for " + bloodGroup);
+                } else {
+                    bloodData.values[index] = newAmount;
+                }
+                localStorage.setItem('bloodData', JSON.stringify(bloodData)); // Save to localStorage
+                renderBloodAvailabilityChart();
+            } else {
+                alert("Invalid blood group or amount.");
+            }
+        }
+
+        // Placeholder functions for fetching donors and receivers
+        function fetchDonors() {
+            // Fetch donor data logic here
+        }
+
+        function fetchReceivers() {
+            // Fetch receiver data logic here
+        }
+    </script>
+
+</body>
+</html>
