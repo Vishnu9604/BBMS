@@ -3,6 +3,11 @@
 A web application built with Node.js and MongoDB to streamline blood donation and transfusion services, ensuring timely access to life-saving blood when and where it’s needed most.
 
 ---
+## 📚 About This Project
+
+This Blood Bank Management System was developed as my Second Year Project for **BSC.CS at Model College, Mumbai University**. The aim was to apply practical knowledge in web development (Node.js, MongoDB) to solve real-world healthcare challenges in blood donation and management.
+
+---
 
 ## 🚀 Overview
 
