@@ -76,18 +76,6 @@ This Blood Bank Management System was developed as my Second Year Project for **
 3. **Request** blood and communicate with donors/banks.
 4. **Receive notifications** about your requests and inventory updates.
 
----
-
-## 🧑‍💻 Contributing
-
-Want to improve BBMS?  
-Follow these steps:
-
-1. Fork the repo & clone your fork.
-2. Create a new branch and commit your changes.
-3. Push and open a Pull Request describing your improvements.
-
-**See [`CONTRIBUTING.md`](CONTRIBUTING.md) for more details!**
 
 ---
 
